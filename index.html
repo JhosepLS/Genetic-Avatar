@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Genetic Avatar — Aprendizaje Evolutivo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ===================== HEADER ===================== -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <span class="dna-strand"></span>
+          <span class="dna-strand"></span>
+          <span class="dna-strand"></span>
+        </div>
+        <div class="brand-text">
+          <h1>GENETIC&nbsp;AVATAR</h1>
+          <p>Algoritmo Genético · Aprendizaje de locomoción 2D</p>
+        </div>
+      </div>
+      <div class="status-pill" id="simStatus">
+        <span class="status-dot"></span>
+        <span id="statusText">EN ESPERA</span>
+      </div>
+    </header>
+
+    <main class="layout">
+
+      <!-- ===================== CANVAS / ESCENARIO ===================== -->
+      <section class="stage-panel">
+        <div class="stage-frame">
+          <canvas id="gameCanvas" width="1100" height="460"></canvas>
+          <div class="stage-overlay" id="stageOverlay">
+            <div class="overlay-card">
+              <h2>Simulación de Evolución</h2>
+              <p>Pulsa <strong>Iniciar</strong> para que la población comience a aprender a caminar y saltar obstáculos.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Métricas en tiempo real -->
+        <div class="metrics-grid">
+          <div class="metric">
+            <span class="metric-label">Generación</span>
+            <span class="metric-value" id="mGen">0</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Mejor Fitness</span>
+            <span class="metric-value" id="mBestFit">0</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Mejor Distancia</span>
+            <span class="metric-value" id="mBestDist">0<small>px</small></span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Evaluados</span>
+            <span class="metric-value" id="mEvaluated">0</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Vivos</span>
+            <span class="metric-value" id="mAlive">0</span>
+          </div>
+          <div class="metric metric--accent">
+            <span class="metric-label">Meta</span>
+            <span class="metric-value" id="mGoal">—</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== PANEL DE CONTROL ===================== -->
+      <aside class="control-panel">
+
+        <div class="panel-block">
+          <h3 class="panel-title">Control de simulación</h3>
+          <div class="btn-row">
+            <button class="btn btn--primary" id="btnStart">▶ Iniciar</button>
+            <button class="btn" id="btnPause" disabled>❚❚ Pausar</button>
+            <button class="btn btn--ghost" id="btnReset">↺ Reiniciar</button>
+          </div>
+
+          <label class="slider-field">
+            <span class="slider-head">
+              Velocidad de simulación
+              <strong id="speedVal">1×</strong>
+            </span>
+            <input type="range" id="speedRange" min="1" max="20" value="1" step="1">
+          </label>
+
+          <label class="checkbox-field">
+            <input type="checkbox" id="chkRenderAll" checked>
+            <span>Mostrar toda la población</span>
+          </label>
+          <label class="checkbox-field">
+            <input type="checkbox" id="chkTurbo">
+            <span>Modo turbo (saltar render por generaciones)</span>
+          </label>
+        </div>
+
+        <div class="panel-block">
+          <h3 class="panel-title">Representación de la solución</h3>
+          <div class="mode-switch" role="radiogroup" aria-label="Modo de representación">
+            <label class="mode-opt">
+              <input type="radio" name="genMode" value="sequence" checked>
+              <span class="mode-card">
+                <strong>Secuencia</strong>
+                <em>Genoma = acciones por frame. Evolución progresiva y visible (didáctico).</em>
+              </span>
+            </label>
+            <label class="mode-opt">
+              <input type="radio" name="genMode" value="reactive">
+              <span class="mode-card">
+                <strong>Reactivo</strong>
+                <em>Genoma = umbrales de una política con sensores. Generaliza y converge rápido.</em>
+              </span>
+            </label>
+          </div>
+          <p class="hint">Compara cómo la <em>representación</em> cambia la dificultad del problema para el GA.</p>
+        </div>
+
+        <div class="panel-block">
+          <h3 class="panel-title">Parámetros genéticos</h3>
+
+          <label class="slider-field">
+            <span class="slider-head">Tamaño de población <strong id="popVal">60</strong></span>
+            <input type="range" id="popRange" min="10" max="200" value="80" step="5">
+          </label>
+
+          <label class="slider-field" id="genomeField">
+            <span class="slider-head">Longitud del genoma <strong id="genomeVal">160</strong></span>
+            <input type="range" id="genomeRange" min="60" max="500" value="160" step="10">
+          </label>
+
+          <label class="slider-field">
+            <span class="slider-head">Prob. de crossover <strong id="crossVal">0.75</strong></span>
+            <input type="range" id="crossRange" min="0" max="1" value="0.75" step="0.05">
+          </label>
+
+          <label class="slider-field">
+            <span class="slider-head">Prob. de mutación <strong id="mutVal">0.05</strong></span>
+            <input type="range" id="mutRange" min="0" max="0.5" value="0.05" step="0.01">
+          </label>
+
+          <label class="slider-field">
+            <span class="slider-head">Tamaño de élite <strong id="eliteVal">5</strong></span>
+            <input type="range" id="eliteRange" min="0" max="20" value="5" step="1">
+          </label>
+
+          <label class="slider-field">
+            <span class="slider-head">Tamaño de torneo <strong id="tourVal">4</strong></span>
+            <input type="range" id="tourRange" min="2" max="12" value="4" step="1">
+          </label>
+
+          <p class="hint">Los parámetros se aplican al pulsar <em>Reiniciar</em>.</p>
+        </div>
+
+        <div class="panel-block">
+          <h3 class="panel-title">Gráfico de fitness</h3>
+          <canvas id="chartCanvas" width="320" height="150"></canvas>
+          <div class="chart-legend">
+            <span><i class="dot dot--best"></i> Mejor</span>
+            <span><i class="dot dot--avg"></i> Promedio</span>
+          </div>
+        </div>
+
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <p>Proyecto académico · Algoritmos Genéticos &nbsp;|&nbsp; HTML · CSS · JavaScript puro &nbsp;|&nbsp; Sin dependencias externas</p>
+    </footer>
+  </div>
+
+  <!-- Módulos JS (orden de dependencia) -->
+  <script src="world.js"></script>
+  <script src="agent.js"></script>
+  <script src="genetic.js"></script>
+  <script src="game.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
