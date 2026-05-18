@@ -26,8 +26,6 @@ enfoque didáctico.
 11. [Estrategias de intensificación y diversificación](#11-estrategias-de-intensificación-y-diversificación)
 12. [Instrucciones de ejecución](#12-instrucciones-de-ejecución)
 13. [Estructura del proyecto](#13-estructura-del-proyecto)
-14. [Cómo crear el repositorio Git](#14-cómo-crear-el-repositorio-git)
-15. [Video demostrativo](#15-video-demostrativo)
 
 ---
 
@@ -353,45 +351,6 @@ Flujo general: `main.js` lee la configuración de la UI → `game.js` crea el AG
 (`genetic.js`) y una población de avatares (`agent.js`) en el mundo
 (`world.js`) → simula a todos en paralelo → al terminar la generación calcula
 el fitness y pide la siguiente al AG → repite.
-
-## 14. Cómo crear el repositorio Git
-
-```bash
-cd genetic-avatar
-git init
-git add .
-git commit -m "Genetic Avatar: aprendizaje de locomoción 2D con Algoritmo Genético"
-
-# Crea un repositorio vacío en GitHub y luego:
-git branch -M main
-git remote add origin https://github.com/<usuario>/<repositorio>.git
-git push -u origin main
-```
-
-## 15. Video demostrativo
-
-El video de entrega debería mostrar:
-
-1. **La aplicación ejecutándose** en el navegador (la interfaz completa).
-2. **Varias generaciones evolucionando**: arrancar en la generación 0 con
-   movimiento caótico y dejar correr hasta que se complete el nivel.
-3. **La mejora progresiva**: señalar cómo la *Mejor distancia* y la línea del
-   gráfico de fitness suben con cada generación, y cómo los avatares pasan de
-   morir en el primer obstáculo a llegar a la meta.
-4. **Explicación breve del algoritmo y resultados**: comentar la
-   representación del genoma, la función fitness y la diferencia entre el modo
-   *Secuencia* y el modo *Reactivo*.
-
-Sugerencias para grabarlo:
-
-- Usa cualquier grabador de pantalla (OBS Studio gratuito, Xbox Game Bar en
-  Windows con `Win+G`, o la grabación de pantalla del sistema).
-- Empieza en modo **Secuencia** con los valores por defecto: la evolución es
-  visible y suele completar el nivel en ~10–20 generaciones. Sube la
-  *velocidad* a 4×–8× para no alargar el video.
-- Después cambia a modo **Reactivo** para mostrar, como comparación, que con
-  una representación mejor el problema se resuelve casi de inmediato.
-- Duración recomendada: 3–5 minutos.
 
 ---
 
